@@ -1,9 +1,9 @@
 # 2022_assignment3_GMP
 
-Gruppo GMP:
-* Antonio Grillo (851970)
-* Giacomo Motta (851887)
-* Gabriele Pandini (856598)
+## Gruppo GMP
+- Antonio Grillo (851970)
+- Giacomo Motta (851887)
+- Gabriele Pandini (856598)
 
 Link repository: https://gitlab.com/a.grillo22/2022_assignment3_gmp.git
 
