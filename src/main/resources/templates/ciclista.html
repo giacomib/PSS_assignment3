@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Ciclisti</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+	<script src="https://kit.fontawesome.com/4217420dea.js" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="/mystyle.css">	
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-light bg-light navbarcc">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">UniBike</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/">Ciclisti</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/bici">Bici</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/ricercaPercorso}">Cerca percorso</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/gestioneCitta}">Gestione citta</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    
+    <div id="main">
+    	<h1 class="text" th:text="${ciclista.nome} + ' ' + ${ciclista.cognome}">Nome Cognome</h1>
+    </div>
+    
+    <h2 class="textBday">Nato il: <span th:text="${ciclista.nascita}">04/08/2000</span></h2>
+
+    
+    <h2 class="text1">Disciplina: <span th:text="${ciclista.disciplina}">RIDER</span></h2>
+    <div class="formCard">
+    	<p class="textLeft">Se si vuole modificare la disciplina, selezionarla dalla seguente lista e confermare con 'Modifica'.</p>
+		<form method="POST" th:action="@{/ciclista/cambiaDisciplina/{id}(id = ${ciclista.id})}">
+	  		<div class="form-group">
+	    		<select name="nuovaDisciplina" class="form-control input_form">
+	    			<option value="STRADISTA" th:selected="${ciclista.isSelected('STRADISTA')}">STRADISTA</option> <!-- th:selected="${ciclista.isSelected()}" https://stackoverflow.com/questions/32210900/default-value-in-drop-down-menu-in-thymeleaf-->
+	    			<option value="RIDER" th:selected="${ciclista.isSelected('RIDER')}">RIDER</option>
+	    			<option value="VIAGGIATORE" th:selected="${ciclista.isSelected('VIAGGIATORE')}">VIAGGIATORE</option>
+	    		</select>
+	  		</div>
+	  		<div th:if="${confirm}">
+	  			<p class="textLeft" style="color:green">Modifica avvenuta!</p>
+	  		</div>
+	  		<button type="submit" class="btn btn-primary submitDisc"><b>Modifica</b></button>
+		</form>
+	</div>
+
+    <h2 class="text1">Sfide <a type="button" class="btn btn-primary noFog" th:href="@{/ciclista/nuovaSfida/{id}(id = ${ciclista.id})}"><b>+</b></a></h2>
+	<div class= "scrollable">
+		<table class="tabCic" th:each="sfidante: ${ciclista.sfida}">
+			<tr>
+				<td class="tdSfida">
+					<div class="card btnHome">
+						<div th:text="${sfidante.nome} + ' ' + ${sfidante.cognome}">Nome Cognome</div>
+						<div class="textPerc" th:text="${sfidante.nascita}">Dati percorso</div>
+					</div>
+				</td>
+				<td class="tdForm">
+					<form method="POST" class="deleteSub" th:action="@{/ciclista/eliminaSfida/{id}(id = ${ciclista.id})}">
+						<input type="hidden" th:value="${sfidante.id}" name="idSfidante">
+						<button class="deleteButt" type="submit"><i class="fa-solid fa-trash"></i></button>
+					</form>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<h2 class="text1">Percorsi <a type="button" class="btn btn-primary noFog" th:href="@{/ciclista/{id}/nuovoPercorso(id = ${ciclista.id})}"><b>+</b></a></h2>
+	<div class= "scrollable">
+		<table class="tabCic" th:each="percorso: ${ciclista.percorso}">
+			<tr>
+				<td class="tdPercorso">
+					<div class="card btnHome">
+						<div th:text="${percorso.partenza} + ' - ' + ${percorso.arrivo}"></div>
+						<div class="textPerc" th:text="'Data: ' + ${percorso.data} + ' | Lunghezza: ' + ${percorso.km} + ' | Dislivello: ' + ${percorso.dislivello} + ' | Ora partenza: ' + ${percorso.ora_p} + ' | Ora arrivo: ' + ${percorso.ora_a}">Dati percorso</div>
+					</div>
+				</td>
+				<td class="tdForm">
+					<form method="GET" th:action="@{/ciclista/{idCic}/modificaPercorso/{idPerc}(idCic = ${ciclista.id} , idPerc = ${percorso.id})}">
+						<button class="modifyButt" type="submit"><i class="fa-solid fa-pen-to-square"></i></button>
+					</form>
+
+				</td>
+				<td class="tdForm">
+					<form method="POST" th:action="@{/ciclista/eliminaPercorso/{id}(id = ${ciclista.id})}">
+						<input type="hidden" th:value="${percorso.id}" name="idPercorso">
+						<button  class="deleteButt" type="submit"><i class="fa-solid fa-trash"></i></button>
+					</form>
+				</td>
+			</tr>
+		</table>
+	</div>
+		
+	<h2 class="text1">Bici <a type="button" class="btn btn-primary noFog" th:href="@{/associaBici/{id}(id = ${ciclista.id})}"><b>+</b></a></h2>
+	<div class= "scrollable">
+
+	<table class="tabCic" th:each="b: ${ciclista.bici}">
+			<tr>
+				<td class="tdCic">
+				<div class="card btnHome">
+					<span th:text="${b.marca} + ' ' + ${b.modello} + ' ' + ${b.anno}"> Bici </span>
+	    			<span  class="textPerc" th:switch="${#strings.arraySplit(b.class, '.')[5]}">
+		    			<span th:case="'Gravel'" th:text="Gravel + ':   Appendici: ' + ${(b.appendici) ? 'Sì' : 'No'} + ' | Borse: ' + ${(b.borse)  ? 'Sì' : 'No'}">Gravel</span>
+		    			<span th:case="'MountainBike'" th:text="MountainBike + ':   Forcella: ' + ${b.forcella} + ' | Ammortizzatore: ' + ${b.ammortizzatore}">MB</span>
+		    			<span th:case="'Corsa'" th:text="Corsa + ':   Misuratore: ' + ${b.misuratore} + ' | Ruote: ' + ${b.ruote} + ' cm'">C</span>
+	    		</span>
+				</div>
+				</td>
+				<td class="tdForm">
+					<form method="POST" class="deleteSub" th:action="@{/ciclista/eliminaBici/{id}(id = ${ciclista.id})}">
+						<input type="hidden" th:value="${b.id}" name="idBici">
+						<button class="deleteButt" type="submit"><i class="fa-solid fa-trash"></i></button>
+					</form>
+				</td>
+			</tr>
+	</table>
+	</div>
+</body>
+</html>
